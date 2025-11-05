@@ -1,611 +1,326 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
-    <title>Jigsaw Puzzle - Hexagon</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: #fff;
-            overflow: hidden;
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            touch-action: none;
-        }
-
-        #container {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-
-        #header {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            padding: 15px 20px;
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
-            z-index: 10;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        #timer {
-            font-size: 18px;
-            font-weight: 600;
-            color: #fff;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-        }
-
-        #title {
-            font-size: 20px;
-            font-weight: 700;
-            color: #fff;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-        }
-
-        #puzzleCanvas {
-            cursor: grab;
-            max-width: 100%;
-            max-height: 100%;
-            touch-action: none;
-        }
-
-        #puzzleCanvas:active {
-            cursor: grabbing;
-        }
-
-        #completionModal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        #completionModal.show {
-            display: flex;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .modal-content {
-            background: linear-gradient(135deg, #2a2a3e 0%, #1f2937 100%);
-            padding: 40px 30px;
-            border-radius: 20px;
-            text-align: center;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            max-width: 90%;
-            animation: slideUp 0.4s ease;
-        }
-
-        @keyframes slideUp {
-            from {
-                transform: translateY(50px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .modal-content h2 {
-            font-size: 32px;
-            margin-bottom: 15px;
-            color: #4ade80;
-            text-shadow: 0 0 20px rgba(74, 222, 128, 0.3);
-        }
-
-        .modal-content p {
-            font-size: 18px;
-            margin-bottom: 10px;
-            color: #e5e7eb;
-        }
-
-        .modal-content button {
-            margin-top: 25px;
-            padding: 15px 40px;
-            font-size: 18px;
-            font-weight: 600;
-            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
-            color: #fff;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(74, 222, 128, 0.4);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .modal-content button:active {
-            transform: scale(0.95);
-            box-shadow: 0 2px 10px rgba(74, 222, 128, 0.4);
-        }
-
-        #loading {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            flex-direction: column;
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(255, 255, 255, 0.1);
-            border-top-color: #4ade80;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        #loading p {
-            margin-top: 20px;
-            font-size: 16px;
-            color: #9ca3af;
-        }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<title>Honeycomb Puzzle 4×4 — No Gaps</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial,sans-serif;
+  background:#0f0f0f;color:#fff;overflow:hidden;position:fixed;width:100%;height:100%;
+}
+#header{
+  position:absolute;top:0;left:0;right:0;padding:12px 20px;z-index:10;
+  display:flex;justify-content:space-between;align-items:center;
+  background:rgba(0,0,0,.35);backdrop-filter:blur(8px);
+}
+#title,#timer{font-weight:700}
+canvas{touch-action:none;cursor:grab}
+canvas:active{cursor:grabbing}
+#loading,#completionModal{
+  position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:50;
+  background:rgba(0,0,0,.8);backdrop-filter:blur(10px)
+}
+#completionModal{display:none}
+.modal{
+  background:#1f1f1f;border-radius:14px;padding:28px 24px;text-align:center;
+  box-shadow:0 12px 40px rgba(0,0,0,.5)
+}
+.modal button{
+  margin-top:14px;padding:10px 22px;border:0;border-radius:10px;cursor:pointer;
+  background:#4ade80;color:#0b0b0b;font-weight:700
+}
+.hint-toggle{
+  position:absolute;right:12px;bottom:12px;z-index:12;opacity:.7
+}
+.hint-toggle input{transform:scale(1.1);vertical-align:middle;margin-right:8px}
+</style>
 </head>
 <body>
-    <div id="loading">
-        <div class="spinner"></div>
-        <p>Loading puzzle...</p>
-    </div>
 
-    <div id="container">
-        <div id="header">
-            <div id="title">Hexagon Puzzle</div>
-            <div id="timer">00:00</div>
-        </div>
-        <canvas id="puzzleCanvas"></canvas>
-    </div>
+<div id="loading"><h3>Loading puzzle…</h3></div>
 
-    <div id="completionModal">
-        <div class="modal-content">
-            <h2>🎉 Puzzle Completed!</h2>
-            <p>Time: <span id="finalTime"></span></p>
-            <button onclick="resetPuzzle()">Play Again</button>
-        </div>
-    </div>
+<div id="header">
+  <div id="title">Honeycomb Puzzle 4×4</div>
+  <div id="timer">00:00</div>
+</div>
 
-    <script>
-        // ==================== CONFIGURATION ====================
-        const PUZZLE_COLS = 4;
-        const PUZZLE_ROWS = 4;
-        const SNAP_DISTANCE = 30;
-        const IMAGE_PATH = './assets/puzzle.jpg';
+<canvas id="canvas"></canvas>
 
-        // ==================== GAME STATE ====================
-        let canvas, ctx;
-        let pieces = [];
-        let draggedPiece = null;
-        let dragOffset = { x: 0, y: 0 };
-        let puzzleImage = null;
-        let startTime = null;
-        let timerInterval = null;
-        
-        let hexRadius, hexWidth, hexHeight; 
-        let puzzleWidth, puzzleHeight;
-        let offsetX, offsetY;
-        
-        let isCompleted = false;
-        let animationFrame = null;
-        
-        // === FIX 1 of 3: Added dpr variable ===
-        let dpr = 1;
+<label class="hint-toggle">
+  <input id="toggleHints" type="checkbox" checked />
+  Show placement guides
+</label>
 
-        // ==================== INITIALIZATION ====================
-        window.addEventListener('load', init);
+<div id="completionModal">
+  <div class="modal">
+    <h2>🐝 Puzzle Completed!</h2>
+    <p>Time: <span id="finalTime"></span></p>
+    <button onclick="resetPuzzle()">Play Again</button>
+  </div>
+</div>
 
-        function init() {
-            canvas = document.getElementById('puzzleCanvas');
-            // Kept your original optimization
-            ctx = canvas.getContext('2d', { alpha: false, desynchronized: true });
-            
-            // Kept your original event listener settings
-            document.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
-            document.addEventListener('gesturestart', (e) => e.preventDefault());
-            document.addEventListener('gesturechange', (e) => e.preventDefault());
-            document.addEventListener('gestureend', (e) => e.preventDefault());
-            
-            loadImage();
-        }
+<script>
+/* ================= CONFIG ================= */
+const COLS = 4;          // 4 × 4 = 16 pieces
+const ROWS = 4;
+const SNAP = 30;
+const IMG_PATH = "./assets/puzzle.jpg";
 
-        function loadImage() {
-            puzzleImage = new Image();
-            puzzleImage.onload = () => {
-                setupPuzzle();
-                document.getElementById('loading').style.display = 'none';
-            };
-            puzzleImage.onerror = () => {
-                document.getElementById('loading').innerHTML = 
-                    '<p style="color: #ef4444; padding: 20px; text-align: center;">Failed to load puzzle.jpg<br><br>Please ensure the image is located at:<br>./assets/puzzle.jpg</p>';
-            };
-            puzzleImage.src = IMAGE_PATH;
-        }
+/* ================ STATE ================ */
+let canvas, ctx, img;
+let pw, ph, w, h, ox, oy;              // geometry
+let pieces = [];                       // all tiles
+let drag = null, dragOff = {x:0,y:0};  // dragging
+let timerId = null, startTime = 0, done = false;
 
-        // ==================== PUZZLE SETUP ====================
-        function setupPuzzle() {
-            const headerHeight = 60;
-            const padding = 20;
-            const availableWidth = window.innerWidth - padding * 2;
-            const availableHeight = window.innerHeight - headerHeight - padding * 2;
-            
-            const radiusFromWidth = availableWidth / (PUZZLE_COLS * Math.sqrt(3));
-            const radiusFromHeight = availableHeight / (PUZZLE_ROWS * 1.5 + 0.5);
-            
-            hexRadius = Math.min(radiusFromWidth, radiusFromHeight);
-            hexWidth = Math.sqrt(3) * hexRadius;
-            hexHeight = 2 * hexRadius;
+/* ============== INIT & IMAGE ============== */
+window.addEventListener("load", () => {
+  canvas = document.getElementById("canvas");
+  ctx = canvas.getContext("2d");
 
-            const vertSpacing = hexHeight * 0.75;
-            puzzleWidth = PUZZLE_COLS * hexWidth;
-            puzzleHeight = (PUZZLE_ROWS * vertSpacing) + (hexHeight * 0.25);
-            
-            // === FIX 2 of 3: Stored dpr value ===
-            dpr = Math.min(window.devicePixelRatio || 1, 2);
-            canvas.width = window.innerWidth * dpr;
-            canvas.height = window.innerHeight * dpr;
-            canvas.style.width = window.innerWidth + 'px';
-            canvas.style.height = window.innerHeight + 'px';
-            ctx.scale(dpr, dpr);
-            
-            offsetX = (window.innerWidth - puzzleWidth) / 2;
-            offsetY = (window.innerHeight - puzzleHeight) / 2 + headerHeight / 2;
-            
-            createPieces();
-            scatterPieces();
-            startTimer();
-            attachEventListeners();
-            
-            if (animationFrame) cancelAnimationFrame(animationFrame);
-            draw();
-        }
+  img = new Image();
+  img.onload = () => { document.getElementById("loading").style.display = "none"; setup(); };
+  img.src = IMG_PATH;
 
-        // Optimized path drawing function (no changes)
-        function drawHexPath(ctx, cx, cy) {
-            ctx.beginPath();
-            ctx.moveTo(cx, cy - hexRadius); // Top
-            ctx.lineTo(cx + hexWidth / 2, cy - hexRadius / 2); // Top-right
-            ctx.lineTo(cx + hexWidth / 2, cy + hexRadius / 2); // Bottom-right
-            ctx.lineTo(cx, cy + hexRadius); // Bottom
-            ctx.lineTo(cx - hexWidth / 2, cy + hexRadius / 2); // Bottom-left
-            ctx.lineTo(cx - hexWidth / 2, cy - hexRadius / 2); // Top-left
-            ctx.closePath();
-        }
+  document.getElementById("toggleHints").addEventListener("change", () => {});
+});
 
-        function createPieces() {
-            pieces = [];
-            const vertSpacing = hexHeight * 0.75;
-            const horizSpacing = hexWidth;
-            
-            const imgSliceW = puzzleImage.width / PUZZLE_COLS;
-            const imgSliceH = puzzleImage.height / PUZZLE_ROWS;
+function setup(){
+  // Fit puzzle area to viewport while preserving image aspect ratio
+  const headerH = 60, pad = 10;
+  const availW = innerWidth - pad*2;
+  const availH = innerHeight - headerH - pad*2;
+  const imageAspect = img.width / img.height;
 
-            for (let row = 0; row < PUZZLE_ROWS; row++) {
-                for (let col = 0; col < PUZZLE_COLS; col++) {
-                    
-                    let cx = offsetX + horizSpacing * col + hexWidth / 2;
-                    let cy = offsetY + vertSpacing * row + hexHeight / 2;
-                    
-                    if (col % 2 === 1) {
-                        cy += hexHeight / 2;
-                    }
-                    
-                    const sx = col * imgSliceW;
-                    const sy = row * imgSliceH;
-                    
-                    pieces.push({
-                        correctX: cx, correctY: cy,
-                        currentX: 0, currentY: 0,
-                        col: col, row: row,
-                        sx: sx, sy: sy,
-                        sw: imgSliceW, sh: imgSliceH,
-                        placed: false,
-                        zIndex: row * PUZZLE_COLS + col
-                    });
-                }
-            }
-        }
+  if (availW / availH > imageAspect) {
+    h = availH;
+    w = h * imageAspect;
+  } else {
+    w = availW;
+    h = w / imageAspect;
+  }
 
-        function scatterPieces() {
-            const margin = 60;
-            pieces.forEach((piece) => {
-                const randomX = Math.random() * (window.innerWidth - margin * 2 - hexWidth) + margin + hexWidth / 2;
-                const randomY = Math.random() * (window.innerHeight - margin * 2 - hexHeight) + margin + hexHeight / 2;
-                
-                piece.currentX = randomX;
-                piece.currentY = randomY;
-                
-                if (Math.abs(piece.currentX - piece.correctX) < 50 && 
-                    Math.abs(piece.currentY - piece.correctY) < 50) {
-                    piece.currentX += 100;
-                }
-            });
-        }
+  canvas.width = innerWidth;
+  canvas.height = innerHeight;
 
-        // ==================== EVENT HANDLING ====================
-        function attachEventListeners() {
-            // Your original event listeners (unchanged)
-            canvas.removeEventListener('mousedown', handleStart);
-            canvas.removeEventListener('mousemove', handleMove);
-            canvas.removeEventListener('mouseup', handleEnd);
-            canvas.removeEventListener('touchstart', handleStart);
-            canvas.removeEventListener('touchmove', handleMove);
-            canvas.removeEventListener('touchend', handleEnd);
-            
-            canvas.addEventListener('mousedown', handleStart);
-            canvas.addEventListener('mousemove', handleMove);
-            canvas.addEventListener('mouseup', handleEnd);
-            canvas.addEventListener('touchstart', handleStart, { passive: false });
-            canvas.addEventListener('touchmove', handleMove, { passive: false });
-            canvas.addEventListener('touchend', handleEnd, { passive: false });
-        }
+  // --- KEY CORRECT MATH (Style A: pointy-top hex, staggered columns) ---
+  // Total content size that hex grid occupies:
+  //   width:  pw * (COLS + 0.5)   (because odd rows shift by +0.5 hex)
+  //   height: ph * (ROWS*0.75 + 0.25)
+  // So choose pw, ph so that content exactly equals (w, h)
+  pw = w / (COLS + 0.5);
+  ph = h / (ROWS * 0.75 + 0.25);
 
-        // === FIX 3 of 3: Corrected handleStart ===
-        function handleStart(e) {
-            if (isCompleted) return;
-            e.preventDefault(); 
-            
-            const pos = getEventPosition(e);
-            const sortedPieces = [...pieces].sort((a, b) => b.zIndex - a.zIndex);
-            
-            for (let piece of sortedPieces) {
-                if (!piece.placed) {
-                    
-                    // 1. Draw the path (using CSS pixel coordinates)
-                    drawHexPath(ctx, piece.currentX, piece.currentY); 
-                    
-                    // 2. Check the path using SCALED event coordinates
-                    // This now correctly compares scaled click (pos * dpr)
-                    // with the scaled canvas path.
-                    if (ctx.isPointInPath(pos.x * dpr, pos.y * dpr)) { 
-                        
-                        draggedPiece = piece;
-                        // 3. Offset logic is correct, it uses CSS pixel math
-                        dragOffset.x = pos.x - piece.currentX; 
-                        dragOffset.y = pos.y - piece.currentY;
-                        
-                        const maxZ = Math.max(...pieces.map(p => p.zIndex));
-                        piece.zIndex = maxZ + 1;
-                        break;
-                    }
-                }
-            }
-        }
+  ox = (innerWidth - w)/2;
+  oy = (innerHeight - h)/2 + headerH/2;
 
-        function handleMove(e) {
-            if (!draggedPiece) return;
-            e.preventDefault(); 
-            
-            const pos = getEventPosition(e);
-            draggedPiece.currentX = pos.x - dragOffset.x;
-            draggedPiece.currentY = pos.y - dragOffset.y;
-        }
+  buildPieces();
+  scatterPieces();
+  attachEvents();
+  startTimer();
+  draw();
+}
 
-        function handleEnd(e) {
-            if (!draggedPiece) return;
-            e.preventDefault(); 
-            
-            const dx = draggedPiece.currentX - draggedPiece.correctX;
-            const dy = draggedPiece.currentY - draggedPiece.correctY;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-            
-            if (distance < SNAP_DISTANCE) {
-                draggedPiece.currentX = draggedPiece.correctX;
-                draggedPiece.currentY = draggedPiece.correctY;
-                draggedPiece.placed = true;
-                
-                if (navigator.vibrate) { // Your original haptic feedback
-                    navigator.vibrate(50);
-                }
-                
-                checkCompletion();
-            }
-            
-            draggedPiece = null;
-        }
+/* ============== PIECES ============== */
+function buildPieces(){
+  pieces = [];
+  for (let r = 0; r < ROWS; r++){
+    for (let c = 0; c < COLS; c++){
+      const cx = ox + c*pw + (r%2 ? pw/2 : 0);
+      const cy = oy + r*ph*0.75;
 
-        function getEventPosition(e) {
-            const rect = canvas.getBoundingClientRect();
-            const clientX = e.clientX || (e.touches && e.touches[0] && e.touches[0].clientX) || 0;
-            const clientY = e.clientY || (e.touches && e.touches[0] && e.touches[0].clientY) || 0;
-            
-            return {
-                x: clientX - rect.left,
-                y: clientY - rect.top
-            };
-        }
+      // Precompute source rect mapping (PERFECT alignment!)
+      const contentW = pw * (COLS + 0.5);
+      const contentH = ph * (ROWS*0.75 + 0.25);
+      const sx = ((c*pw + (r%2 ? pw/2 : 0)) / contentW) * img.width;
+      const sy = ((r*ph*0.75) / contentH) * img.height;
+      const sw = (pw / contentW) * img.width;
+      const sh = (ph / contentH) * img.height;
 
-        // ==================== RENDERING ====================
-        // Optimized draw function (no changes)
-        // ==================== RENDERING ====================
-        function draw() {
-            // Clear canvas with background
-            ctx.fillStyle = '#1a1a2e';
-            ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+      pieces.push({
+        row:r, col:c,
+        cx, cy,             // correct pos
+        x:0,  y:0,          // current pos
+        placed:false, z:r*COLS+c,
+        sx, sy, sw, sh      // source mapping
+      });
+    }
+  }
+}
 
-            // === NEW LOGIC: Check if puzzle is completed ===
-            if (isCompleted) {
-                // 1. If completed, draw the single, final, complete image
-                ctx.drawImage(
-                    puzzleImage,
-                    offsetX, 
-                    offsetY, 
-                    puzzleWidth, 
-                    puzzleHeight
-                );
-            } else {
-                // 2. If not completed, draw the puzzle pieces
-                
-                // Draw ghost positions for unplaced pieces
-                pieces.forEach(piece => {
-                    if (!piece.placed) {
-                        drawHexPath(ctx, piece.correctX, piece.correctY); 
-                        ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
-                        ctx.lineWidth = 2;
-                        ctx.setLineDash([5, 5]);
-                        ctx.stroke(); 
-                        ctx.setLineDash([]);
-                    }
-                });
-                
-                // Sort pieces by zIndex for proper layering
-                const sortedPieces = [...pieces].sort((a, b) => a.zIndex - b.zIndex);
-                
-                // Draw pieces
-                sortedPieces.forEach(piece => {
-                    drawHexPath(ctx, piece.currentX, piece.currentY); 
-                    
-                    ctx.save();
-                    
-                    // Shadow logic (unchanged)
-                    if (!piece.placed && piece !== draggedPiece) {
-                        ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
-                        ctx.shadowBlur = 10;
-                        ctx.shadowOffsetX = 0;
-                        ctx.shadowOffsetY = 3;
-                    } else if (piece === draggedPiece) {
-                        ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
-                        ctx.shadowBlur = 20;
-                        ctx.shadowOffsetX = 0;
-                        ctx.shadowOffsetY = 8;
-                    }
-                    
-                    ctx.clip(); 
-                    
-                    // Draw piece image (unchanged)
-                    ctx.drawImage(
-                        puzzleImage,
-                        piece.sx, piece.sy, piece.sw, piece.sh,
-                        Math.round(piece.currentX - hexWidth / 2), 
-                        Math.round(piece.currentY - hexHeight / 2), 
-                        Math.round(hexWidth), 
-                        Math.round(hexHeight)
-                    );
-                    
-                    ctx.restore();
-                    
-                    // === MODIFIED BORDER LOGIC ===
-                    // Only draw a border if the piece is NOT placed
-                    if (!piece.placed) {
-                        if (piece === draggedPiece) {
-                            ctx.strokeStyle = 'rgba(74, 222, 128, 0.8)';
-                            ctx.lineWidth = 3;
-                        } else {
-                            ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
-                            ctx.lineWidth = 1.5;
-                        }
-                        ctx.stroke(); // Draw the border
-                    }
-                    // If piece.placed is true, no border is drawn, removing the gaps
-                });
-            }
-            
-            // Keep the animation loop running
-            animationFrame = requestAnimationFrame(draw);
-        }
+function scatterPieces(){
+  const margin = 50;
+  pieces.forEach(p => {
+    p.x = Math.random()*(innerWidth - pw - margin*2) + margin;
+    p.y = Math.random()*(innerHeight - ph - margin*2) + margin;
+  });
+}
 
-        // ==================== TIMER ====================
-        // All your original timer/completion logic is unchanged
-        function startTimer() {
-            if (timerInterval) clearInterval(timerInterval);
-            startTime = Date.now();
-            updateTimer();
-            timerInterval = setInterval(updateTimer, 1000);
-        }
+/* ============== HEX SHAPE ============== */
+function hexPath(ctx, x, y, w, h){
+  const s = w/2, v = h/4; // pointy-top
+  ctx.beginPath();
+  ctx.moveTo(x+s, y);
+  ctx.lineTo(x+w, y+v);
+  ctx.lineTo(x+w, y+3*v);
+  ctx.lineTo(x+s, y+h);
+  ctx.lineTo(x,   y+3*v);
+  ctx.lineTo(x,   y+v);
+  ctx.closePath();
+}
 
-        function updateTimer() {
-            if (isCompleted) return;
-            
-            const elapsed = Math.floor((Date.now() - startTime) / 1000);
-            const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
-            const seconds = (elapsed % 60).toString().padStart(2, '0');
-            document.getElementById('timer').textContent = `${minutes}:${seconds}`;
-        }
+/* ============== INPUT ============== */
+function attachEvents(){
+  canvas.onmousedown = startDrag;
+  canvas.onmousemove = moveDrag;
+  canvas.onmouseup   = endDrag;
+  canvas.ontouchstart= startDrag;
+  canvas.ontouchmove = moveDrag;
+  canvas.ontouchend  = endDrag;
+}
 
-        function checkCompletion() {
-            if (pieces.every(piece => piece.placed)) {
-                isCompleted = true;
-                clearInterval(timerInterval);
-                
-                const finalTime = document.getElementById('timer').textContent;
-                document.getElementById('finalTime').textContent = finalTime;
-                
-                if (navigator.vibrate) { 
-                    navigator.vibrate([100, 50, 100, 50, 200]);
-                }
-                
-                setTimeout(() => {
-                    document.getElementById('completionModal').classList.add('show');
-                }, 600);
-            }
-        }
+function pointerPos(e){
+  const r = canvas.getBoundingClientRect();
+  const X = e.touches ? e.touches[0].clientX : e.clientX;
+  const Y = e.touches ? e.touches[0].clientY : e.clientY;
+  return { x: X - r.left, y: Y - r.top };
+}
 
-        function resetPuzzle() {
-            document.getElementById('completionModal').classList.remove('show');
-            isCompleted = false;
-            pieces.forEach(piece => {
-                piece.placed = false;
-                piece.zIndex = piece.row * PUZZLE_COLS + piece.col;
-            });
-            scatterPieces();
-            startTimer();
-        }
+function startDrag(e){
+  if (done) return;
+  const p = pointerPos(e);
+  pieces.sort((a,b)=>b.z-a.z).some(pc=>{
+    if (p.x>=pc.x && p.x<=pc.x+pw && p.y>=pc.y && p.y<=pc.y+ph){
+      drag = pc;
+      dragOff.x = p.x - pc.x;
+      dragOff.y = p.y - pc.y;
+      pc.z = Math.max(...pieces.map(k=>k.z)) + 1;
+      return true;
+    }
+  });
+}
 
-        // ==================== WINDOW RESIZE ====================
-        // Your original resize logic is unchanged
-        let resizeTimeout;
-        window.addEventListener('resize', () => {
-            clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(() => {
-                if (puzzleImage && puzzleImage.complete) {
-                    const wasCompleted = isCompleted;
-                    setupPuzzle();
-                    isCompleted = wasCompleted;
-                }
-            }, 250);
-        });
-    </script>
+function moveDrag(e){
+  if (!drag) return;
+  const p = pointerPos(e);
+  drag.x = p.x - dragOff.x;
+  drag.y = p.y - dragOff.y;
+}
+
+function endDrag(){
+  if (!drag) return;
+  const dx = drag.x - drag.cx;
+  const dy = drag.y - drag.cy;
+  if (Math.hypot(dx,dy) < SNAP){
+    drag.x = drag.cx;
+    drag.y = drag.cy;
+    drag.placed = true;
+  }
+  drag = null;
+  checkCompleted();
+}
+
+/* ============== DRAW LOOP ============== */
+function draw(){
+  ctx.clearRect(0,0,innerWidth,innerHeight);
+
+  // ---- Perfectly aligned faint background (tile-by-tile) ----
+  if (document.getElementById("toggleHints").checked){
+    ctx.globalAlpha = 0.18;
+    for (const p of pieces){
+      ctx.save();
+      hexPath(ctx, p.cx, p.cy, pw, ph);
+      ctx.clip();
+      ctx.drawImage(img, p.sx, p.sy, p.sw, p.sh, p.cx, p.cy, pw, ph);
+      ctx.restore();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  // ---- Optional ghost outlines (at target positions) ----
+  if (document.getElementById("toggleHints").checked){
+    ctx.save();
+    ctx.strokeStyle = "rgba(255,255,255,0.18)";
+    ctx.lineWidth = 1;
+    for (const p of pieces){
+      if (!p.placed){
+        hexPath(ctx, p.cx, p.cy, pw, ph);
+        ctx.stroke();
+      }
+    }
+    ctx.restore();
+  }
+
+  // ---- Pieces ----
+  pieces.sort((a,b)=>a.z-b.z);
+  for (const p of pieces){
+    ctx.save();
+    hexPath(ctx, p.x, p.y, pw, ph);
+    ctx.clip();
+    ctx.drawImage(img, p.sx, p.sy, p.sw, p.sh, p.x, p.y, pw, ph);
+    ctx.restore();
+
+    // No borders on placed pieces (no gaps)
+    if (!p.placed){
+      ctx.save();
+      ctx.strokeStyle = "rgba(255,255,255,0.35)";
+      ctx.lineWidth = 1.1;
+      hexPath(ctx, p.x, p.y, pw, ph);
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+
+  requestAnimationFrame(draw);
+}
+
+/* ============== TIMER / COMPLETE ============== */
+function startTimer(){
+  clearInterval(timerId);
+  startTime = Date.now();
+  updateTimer();
+  timerId = setInterval(updateTimer, 1000);
+}
+
+function updateTimer(){
+  if (done) return;
+  const s = Math.floor((Date.now() - startTime)/1000);
+  const mm = String(Math.floor(s/60)).padStart(2,"0");
+  const ss = String(s%60).padStart(2,"0");
+  document.getElementById("timer").textContent = `${mm}:${ss}`;
+}
+
+function checkCompleted(){
+  if (pieces.every(p=>p.placed)){
+    done = true;
+    clearInterval(timerId);
+
+    // Show the clean full image, no seams
+    ctx.clearRect(0,0,innerWidth,innerHeight);
+    ctx.drawImage(img, ox, oy, w, h);
+
+    document.getElementById("finalTime").textContent =
+      document.getElementById("timer").textContent;
+    setTimeout(()=>document.getElementById("completionModal").style.display="flex",400);
+  }
+}
+
+function resetPuzzle(){
+  document.getElementById("completionModal").style.display = "none";
+  done = false;
+  for (const p of pieces){ p.placed = false; }
+  scatterPieces();
+  startTimer();
+}
+
+/* ============== RESIZE ============== */
+let resizeT;
+window.addEventListener("resize", () => {
+  clearTimeout(resizeT);
+  resizeT = setTimeout(()=>{ if(img && img.complete) setup(); }, 200);
+});
+</script>
 </body>
-
 </html>
